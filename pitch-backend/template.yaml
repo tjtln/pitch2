@@ -20,7 +20,7 @@ Resources:
       MemorySize: 128
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref GameTable
+            TableName: !Ref Pitch2Table
       
   ConnectIntegration:
     Type: AWS::ApiGatewayV2::Integration

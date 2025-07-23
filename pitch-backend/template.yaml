@@ -41,7 +41,7 @@ Resources:
       Target: !Sub "integrations/${ConnectIntegration}"
 
    # DynamoDB Table for Game Data
-  GameTable:
+  Pitch2Table:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: GameTable

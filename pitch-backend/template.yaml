@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Sample SAM Template for pitch-backend
+
+Resources:
+  GameWebSocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: GameWebSocketApi
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: "$request.body.action"
+
+  ConnectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      CodeUri: dist/
+      Runtime: nodejs18.x
+      Timeout: 5
+      MemorySize: 128
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref GameTable
+      
+  ConnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref GameWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub
+        - arn:aws:apigateway:${Region}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations
+        - Region: !Ref AWS::Region
+          FunctionArn: !GetAtt ConnectFunction.Arn
+      IntegrationMethod: POST
+
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref GameWebSocketApi
+      RouteKey: "$connect"
+      Target: !Sub "integrations/${ConnectIntegration}"
+
+   # DynamoDB Table for Game Data
+  GameTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: GameTable
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: gameId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: gameId
+          KeyType: HASH
+      SSESpecification:
+        SSEEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl # Optional for automatic record expiration
+        Enabled: true
+      Tags:
+        - Key: Project
+          Value: CardGameApp

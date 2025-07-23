@@ -1,0 +1,17 @@
+{
+  "name": "websocket",
+  "version": "1.0.0",
+  "description": "14 point pitch game!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.152",
+    "@types/node": "^24.1.0",
+    "typescript": "^5.8.3"
+  }
+}

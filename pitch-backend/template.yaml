@@ -3,6 +3,13 @@ Transform: AWS::Serverless-2016-10-31
 Description: Sample SAM Template for pitch-backend
 
 Resources:
+  GameWebSocketApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: GameWebSocketApi
+      ProtocolType: WEBSOCKET
+      RouteSelectionExpression: "$request.body.action"
+
   ConnectFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -11,40 +18,45 @@ Resources:
       Runtime: nodejs18.x
       Timeout: 5
       MemorySize: 128
-    Events:
-      ConnectRoute:
-        Type: Api
-        Properties:
-          RouteKey: $connect
-          ApiId: !Ref WebSocketApi
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ConnectionsTable
     Environment:
       Variables:
         CONNECTIONS_TABLE: !Ref ConnectionsTable
-        
-  ### WebSocket API
-  WebSocketApi:
-    Type: AWS::ApiGatewayV2::Api
+      
+  ConnectIntegration:
+    Type: AWS::ApiGatewayV2::Integration
     Properties:
-      Name: PitchWebSocketApi
-      ProtocolType: WEBSOCKET
-      RouteSelectionExpression: "$request.body.action"
+      ApiId: !Ref GameWebSocketApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !Sub
+        - arn:aws:apigateway:${Region}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations
+        - Region: !Ref AWS::Region
+          FunctionArn: !GetAtt ConnectFunction.Arn
+      IntegrationMethod: POST
 
-  ### Deployment
-  WebSocketDeployment:
-    Type: AWS::ApiGatewayV2::Deployment
+  ConnectRoute:
+    Type: AWS::ApiGatewayV2::Route
     Properties:
-      ApiId: !Ref WebSocketApi
+      ApiId: !Ref GameWebSocketApi
+      RouteKey: "$connect"
+      Target: !Sub "integrations/${ConnectIntegration}"
 
-  ### Stage
-  WebSocketStage:
+  GameWebSocketStage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
-      StageName: $default
+      StageName: prod
+      ApiId: !Ref GameWebSocketApi
       AutoDeploy: true
-      ApiId: !Ref WebSocketApi
-      DeploymentId: !Ref WebSocketDeployment
 
-  ### DynamoDB Table for Game Data
+  WebSocketDeployment:
+      Type: AWS::ApiGatewayV2::Deployment
+      DependsOn: ConnectRoute
+      Properties:
+        ApiId: !Ref GameWebSocketApi
+
+   # DynamoDB Table for Game Data
   ConnectionsTable:
     Type: AWS::DynamoDB::Table
     Properties:

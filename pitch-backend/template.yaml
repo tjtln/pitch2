@@ -44,13 +44,12 @@ Resources:
       Target: !Sub "integrations/${ConnectIntegration}"
 
    ### Deploy the WebSocket API ###
-  WebsocketStage:
+  GameWebSocketStage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
+      StageName: prod
       ApiId: !Ref GameWebSocketApi
-      StageName: "$default"
       AutoDeploy: true
-
 
    # DynamoDB Table for Game Data
   ConnectionsTable:

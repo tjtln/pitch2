@@ -18,6 +18,7 @@ export const handler = async (
 
   switch (route) {
     case '$connect':
+      console.log("connecting");
       return await onConnect(event);
     case '$disconnect':
       return await onDisconnect(event);

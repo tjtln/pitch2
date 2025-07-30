@@ -20,7 +20,10 @@ Resources:
       MemorySize: 128
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref Pitch2Table
+            TableName: !Ref ConnectionsTable
+    Environment:
+      Variables:
+        CONNECTIONS_TABLE: !Ref ConnectionsTable
       
   ConnectIntegration:
     Type: AWS::ApiGatewayV2::Integration
@@ -49,10 +52,10 @@ Resources:
       AutoDeploy: true
 
    # DynamoDB Table for Game Data
-  Pitch2Table:
+  ConnectionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: PitchTable
+      TableName: ConnectionsTable
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
         - AttributeName: gameId

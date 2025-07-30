@@ -1,7 +1,8 @@
+import { APIGatewayProxyResultV2 } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
-export const onConnect = async (event: any) => {
+export default async function onConnect(event: any): Promise<APIGatewayProxyResultV2> {
     const { connectionId } = event.requestContext;
 
     await dynamoDB.put({
@@ -14,4 +15,6 @@ export const onConnect = async (event: any) => {
           createdAt: Date.now(),
         },
       }).promise();
+      
+      return {statusCode: 200}
   };

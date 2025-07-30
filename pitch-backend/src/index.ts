@@ -1,7 +1,7 @@
 import { APIGatewayProxyWebsocketEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
-import { onDealHands } from './routes/dealHands';
-import { onConnect } from './routes/connect';
-import { onDisconnect } from './routes/disconnect';
+import  onDealHands  from './routes/dealHands';
+import  onConnect  from './routes/connect';
+import  onDisconnect  from './routes/disconnect';
 
 export const handler = async (
   event: APIGatewayProxyWebsocketEventV2

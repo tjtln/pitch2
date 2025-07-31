@@ -8,8 +8,14 @@ export const handler = async (
 ): Promise<APIGatewayProxyResultV2> => {
   console.log("Event:", JSON.stringify(event));
 
-  const route = event.requestContext.routeKey;
+  let route = event.requestContext.routeKey;
   const body: any = event.body ? JSON.parse(event.body) : {};
+  console.log(`body: ${body}`)
+  if(body.action) {
+    route = body.action
+  }
+
+  console.log(`route: ${route}`);
 
   switch (route) {
     case '$connect':

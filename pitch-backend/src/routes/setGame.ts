@@ -59,9 +59,9 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
             Key: {
                 PK: `GAME#${gameId}`,
             },
-            UpdateExpression: `${column} = :${column}`,
+            UpdateExpression: `SET ${column} = :${column}`,
             ExpressionAttributeValues: {
-                [`:${column}`]: userId,
+                [`:${column}`]: userId
             },
         }).promise();
     }

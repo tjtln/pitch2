@@ -16,7 +16,7 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
     await dynamoDB.update({
         TableName: tableName!,
         Key: {
-            PK: `CONNECTION#${connectionId}`,
+            PK: `PLAYER#${connectionId}`,
         },
         UpdateExpression: 'SET  gameId = :gameId, userId = :userId',
         ExpressionAttributeValues: {
@@ -32,7 +32,7 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
         },
     }).promise();     
 
-    console.log("exising game:" + JSON.stringify(game));
+    console.log("existing game:" + JSON.stringify(game));
 
 
     if(game.Item){
@@ -65,7 +65,6 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
             },
             UpdateExpression: `SET  gameId = :gameId, ${column} = :${column}`,
             ExpressionAttributeValues: {
-                ':gameId': gameId,
                 [`:${column}`]: userId,
             },
         }).promise();

@@ -22,7 +22,16 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
             ':gameId': gameId,
             ':userId': userId,
         },
-        }).promise();
-        
+    }).promise();
+
+    const game = await dynamoDB.get({
+        TableName: "YourTableName",
+        Key: {
+            PK: { S: `GAME#${gameId}` },
+        },
+    }).promise();
+
+    console.log("exising game:" + game);
+                    
     return {statusCode: 200}
   };

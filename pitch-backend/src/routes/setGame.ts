@@ -66,7 +66,7 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
             UpdateExpression: `SET  gameId = :gameId, ${column} = :${column}`,
             ExpressionAttributeValues: {
                 ':gameId': gameId,
-                [`${column}`]: userId,
+                [`:${column}`]: userId,
             },
         }).promise();
     }

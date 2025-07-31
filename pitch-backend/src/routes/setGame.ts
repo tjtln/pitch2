@@ -4,8 +4,8 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 export default async function setGame(event: any, body: any): Promise<APIGatewayProxyResultV2> {
     const { connectionId } = event.requestContext;
-    const { userId } = body.userId;
-    const { gameId } = body.gameId;
+    const userId = body.userId;
+    const gameId = body.gameId;
 
     console.log(`userId: ${userId}`);
     console.log(`gameId: ${gameId}`);

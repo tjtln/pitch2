@@ -16,7 +16,7 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
     await dynamoDB.put({
         TableName: tableName!,
         Item: {
-            PK: `CONNECTION#${userId}`,
+            PK: `PLAYER#${userId}`,
             connectionId,
           },
     }).promise();
@@ -59,7 +59,7 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
             Key: {
                 PK: `GAME#${gameId}`,
             },
-            UpdateExpression: `SET  gameId = :gameId, ${column} = :${column}`,
+            UpdateExpression: `${column} = :${column}`,
             ExpressionAttributeValues: {
                 [`:${column}`]: userId,
             },

@@ -32,11 +32,44 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
         },
     }).promise();     
 
-    console.log("exising game:" + game);
-                    
-    const row = game.Item;
+    console.log("exising game:" + JSON.stringify(game));
 
-    console.log(row);
+
+    if(game.Item){
+        if(!game.Item.player1){
+            console.log(`setting player1 to ${userId} in game with id ${gameId}`);
+            await setPlayer(gameId, userId, "player1");
+        } else if(!game.Item.player2){
+            console.log(`setting player2 to ${userId} in game with id ${gameId}`);
+            await setPlayer(gameId, userId, "player2");
+        } else if(!game.Item.player3){
+            console.log(`setting player3 to ${userId} in game with id ${gameId}`);
+            await setPlayer(gameId, userId, "player3");
+        } else if(!game.Item.player4){
+            console.log(`setting player4 to ${userId} in game with id ${gameId}`);
+            await setPlayer(gameId, userId, "player4");
+        } else {
+            console.log("game full!");
+            return {statusCode: 200};
+        }
+    } else {
+        console.log(`no game with id ${gameId} exists, creating a new one and setting player1 to ${userId}`);
+        await setPlayer(gameId, userId, "player1");
+    }
+
+    async function setPlayer(gameId: string, userId: string, column: string){
+        await dynamoDB.update({
+            TableName: tableName!,
+            Key: {
+                PK: `GAME#${gameId}`,
+            },
+            UpdateExpression: `SET  gameId = :gameId, ${column} = :${column}`,
+            ExpressionAttributeValues: {
+                ':gameId': gameId,
+                [`${column}`]: userId,
+            },
+        }).promise();
+    }
 
     return {statusCode: 200}
   };

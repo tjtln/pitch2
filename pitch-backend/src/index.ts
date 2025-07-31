@@ -28,5 +28,4 @@ export const handler = async (
       console.warn(`No handler for route: ${route}`);
       return { statusCode: 400, body: 'Unknown route' };
   }
-  return {statusCode:200};
 };

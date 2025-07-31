@@ -10,9 +10,10 @@ export const handler = async (
 
   let route = event.requestContext.routeKey;
   const body: any = event.body ? JSON.parse(event.body) : {};
-  console.log(`body: ${body}`)
+  console.log(`body: ${JSON.stringify(body)}`)
   if(body.action) {
-    route = body.action
+    console.log(`setting route from ${route} to ${body.action}`);
+    route = body.action;
   }
 
   console.log(`route: ${route}`);

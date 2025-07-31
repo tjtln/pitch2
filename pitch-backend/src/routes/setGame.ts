@@ -9,7 +9,7 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
 
     console.log(`userId: ${userId}`);
     console.log(`gameId: ${gameId}`);
-    console.log(`body: ${body}`);
+    console.log(`body: ${JSON.stringify(body)}`);
     console.log(`event: ${event}`);
 
     await dynamoDB.update({

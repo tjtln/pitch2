@@ -21,9 +21,9 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ConnectionsTable
-    Environment:
-      Variables:
-        CONNECTIONS_TABLE: !Ref ConnectionsTable
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE: !Ref ConnectionsTable
 
   GameFunctionInvokePermission:
     Type: AWS::Lambda::Permission
@@ -85,15 +85,15 @@ Resources:
       TableName: ConnectionsTable
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions:
-        - AttributeName: gameId
+        - AttributeName: PK
           AttributeType: S
       KeySchema:
-        - AttributeName: gameId
+        - AttributeName: PK
           KeyType: HASH
       SSESpecification:
         SSEEnabled: true
       TimeToLiveSpecification:
-        AttributeName: ttl # Optional for automatic record expiration
+        AttributeName: ttl
         Enabled: true
       Tags:
         - Key: Project

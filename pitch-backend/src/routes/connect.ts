@@ -9,7 +9,6 @@ export default async function onConnect(event: any): Promise<APIGatewayProxyResu
         TableName: process.env.CONNECTIONS_TABLE!,
         Item: {
           PK: `CONNECTION#${connectionId}`,
-          connectionId,
           status: 'connected',
           createdAt: Date.now(),
         },

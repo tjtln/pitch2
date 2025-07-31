@@ -15,13 +15,14 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
     await dynamoDB.update({
         TableName: process.env.CONNECTIONS_TABLE!,
         Key: {
-          PK: `CONNECTION#${connectionId}`,
+            PK: `CONNECTION#${connectionId}`,
         },
-        UpdateExpression: 'SET  gameId = :gameId',
+        UpdateExpression: 'SET  gameId = :gameId, userId = :userId',
         ExpressionAttributeValues: {
-          ':gameId': ,
+            ':gameId': gameId,
+            ':userId': userId,
         },
-      }).promise();
-      
-      return {statusCode: 200}
+        }).promise();
+        
+    return {statusCode: 200}
   };

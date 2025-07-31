@@ -19,8 +19,13 @@ Resources:
       Timeout: 5
       MemorySize: 128
       Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref ConnectionsTable
+      - DynamoDBCrudPolicy:
+          TableName: !Ref ConnectionsTable
+      - Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: execute-api:ManageConnections
+            Resource: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${GameWebSocketApi}/*/@connections/*
       Environment:
         Variables:
           CONNECTIONS_TABLE: !Ref ConnectionsTable
@@ -73,10 +78,10 @@ Resources:
       AutoDeploy: true
 
   WebSocketDeployment:
-      Type: AWS::ApiGatewayV2::Deployment
-      DependsOn: ConnectRoute
-      Properties:
-        ApiId: !Ref GameWebSocketApi
+    Type: AWS::ApiGatewayV2::Deployment
+    DependsOn: ConnectRoute
+    Properties:
+      ApiId: !Ref GameWebSocketApi
 
    # DynamoDB Table for Game Data
   ConnectionsTable:

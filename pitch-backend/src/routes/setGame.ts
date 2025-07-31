@@ -6,6 +6,7 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
     const { connectionId } = event.requestContext;
     const userId = body.userId;
     const gameId = body.gameId;
+    const tableName = process.env.CONNECTIONS_TABLE;
 
     console.log(`userId: ${userId}`);
     console.log(`gameId: ${gameId}`);
@@ -13,7 +14,7 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
     console.log(`event: ${event}`);
 
     await dynamoDB.update({
-        TableName: process.env.CONNECTIONS_TABLE!,
+        TableName: tableName!,
         Key: {
             PK: `CONNECTION#${connectionId}`,
         },
@@ -25,7 +26,7 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
     }).promise();
 
     const game = await dynamoDB.get({
-        TableName: "YourTableName",
+        TableName: tableName!,
         Key: {
             PK: { S: `GAME#${gameId}` },
         },

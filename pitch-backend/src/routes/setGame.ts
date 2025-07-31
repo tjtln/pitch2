@@ -13,16 +13,12 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
     console.log(`body: ${JSON.stringify(body)}`);
     console.log(`event: ${event}`);
 
-    await dynamoDB.update({
+    await dynamoDB.put({
         TableName: tableName!,
-        Key: {
-            PK: `PLAYER#${connectionId}`,
-        },
-        UpdateExpression: 'SET  gameId = :gameId, userId = :userId',
-        ExpressionAttributeValues: {
-            ':gameId': gameId,
-            ':userId': userId,
-        },
+        Item: {
+            PK: `CONNECTION#${userId}`,
+            connectionId,
+          },
     }).promise();
 
     const game = await dynamoDB.get({

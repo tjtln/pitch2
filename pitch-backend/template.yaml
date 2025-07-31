@@ -70,6 +70,13 @@ Resources:
       RouteKey: "action"
       Target: !Sub "integrations/${WebsocketIntegration}"
 
+  DefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref GameWebSocketApi
+      RouteKey: $default
+      Target: !Sub integrations/${WebsocketIntegration}
+
   GameWebSocketStage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:

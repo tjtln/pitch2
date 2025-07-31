@@ -10,7 +10,7 @@ Resources:
       ProtocolType: WEBSOCKET
       RouteSelectionExpression: "$request.body.action"
 
-  ConnectFunction:
+  GameFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: index.handler
@@ -25,15 +25,15 @@ Resources:
       Variables:
         CONNECTIONS_TABLE: !Ref ConnectionsTable
 
-  ConnectFunctionInvokePermission:
+  GameFunctionInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !GetAtt ConnectFunction.Arn
+      FunctionName: !GetAtt GameFunction.Arn
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${GameWebSocketApi}/* 
       
-  ConnectIntegration:
+  WebsocketIntegration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
       ApiId: !Ref GameWebSocketApi
@@ -41,7 +41,7 @@ Resources:
       IntegrationUri: !Sub
         - arn:aws:apigateway:${Region}:lambda:path/2015-03-31/functions/${FunctionArn}/invocations
         - Region: !Ref AWS::Region
-          FunctionArn: !GetAtt ConnectFunction.Arn
+          FunctionArn: !GetAtt GameFunction.Arn
       IntegrationMethod: POST
 
   ConnectRoute:
@@ -49,7 +49,21 @@ Resources:
     Properties:
       ApiId: !Ref GameWebSocketApi
       RouteKey: "$connect"
-      Target: !Sub "integrations/${ConnectIntegration}"
+      Target: !Sub "integrations/${WebsocketIntegration}"
+
+  DisconnectRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref GameWebSocketApi
+      RouteKey: "$disconnect"
+      Target: !Sub "integrations/${WebsocketIntegration}"
+
+  ActionRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref GameWebSocketApi
+      RouteKey: "action"
+      Target: !Sub "integrations/${WebsocketIntegration}"
 
   GameWebSocketStage:
     Type: AWS::ApiGatewayV2::Stage

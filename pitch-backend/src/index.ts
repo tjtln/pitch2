@@ -1,5 +1,5 @@
 import { APIGatewayProxyWebsocketEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
-import  onDealHands  from './routes/dealHands';
+import  setGame  from './routes/setGame';
 import  onConnect  from './routes/connect';
 import  onDisconnect  from './routes/disconnect';
 
@@ -9,12 +9,7 @@ export const handler = async (
   console.log("Event:", JSON.stringify(event));
 
   const route = event.requestContext.routeKey;
-  let body: any = {};
-  try {
-    if (event.body) body = JSON.parse(event.body);
-  } catch {
-    body = {};
-  }
+  const body: any = event.body ? JSON.parse(event.body) : {};
 
   switch (route) {
     case '$connect':
@@ -22,8 +17,8 @@ export const handler = async (
       return await onConnect(event);
     case '$disconnect':
       return await onDisconnect(event);
-    case 'dealHands':
-      return await onDealHands(event, body);
+    case 'setGame':
+      return await setGame(event, body);
     default:
       console.warn(`No handler for route: ${route}`);
       return { statusCode: 400, body: 'Unknown route' };

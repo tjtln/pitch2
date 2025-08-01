@@ -145,6 +145,7 @@ async function getHandId(gameId: string): Promise<number> {
 async function addHandToDB(handId: number, deck: string[], gameId: string, dealer: string){
     try {
         const dealerNum = parseInt(dealer.charAt(dealer.length-1));
+        console.log(`dealer: ${dealer}, dealerNum: ${dealerNum}, gameId: ${gameId}, handId: ${handId}`)
         await dynamoDB.put({
             TableName: tableName!,
             Item: {

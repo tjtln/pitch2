@@ -92,7 +92,7 @@ export async function getGame(gameId: string): Promise<AttributeMap | null> {
   return row.Item;
 }
 
-export async function updateGame(gameId: string, column: string, value: any){
+export async function updateGame(gameId: string, column: string, value: any): Promise<Boolean> {
   try{
     await dynamoDB.update({
         TableName: tableName!,
@@ -128,6 +128,26 @@ export async function createHand(gameId: string, handId: number, dealer: string,
     }).promise();
     return true;
   } catch(error){
+    return false;
+  }
+}
+
+export async function updateHand(gameId: string, handId: string, userId: string, bid: number): Promise<Boolean> {
+  try{
+    await dynamoDB.update({
+        TableName: tableName!,
+        Key: {
+            PK: `HAND#${gameId}#${handId}`,
+        },
+        UpdateExpression: `SET bid = :bid, bidder = :userId`,
+        ExpressionAttributeValues: {
+            ':bid': bid,
+            ':bidder': userId
+        },
+    }).promise();
+    return true;
+  } catch(error){
+    console.log(`ERROR: ${error}`);
     return false;
   }
 }

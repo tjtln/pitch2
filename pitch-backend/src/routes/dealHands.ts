@@ -140,7 +140,7 @@ async function getHandId(gameId: string): Promise<number> {
         }
     }
 
-    return game.Item.dealer ?? 0;
+    return game.Item.handId ?? 0;
 }
 
 async function addHandToDB(handId: number, deck: string[][], gameId: string, dealer: string){

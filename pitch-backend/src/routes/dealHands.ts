@@ -151,10 +151,10 @@ async function addHandToDB(handId: number, deck: string[][], gameId: string, dea
             TableName: tableName!,
             Item: {
                 PK: `HAND#${gameId}#${handId}`,
-                'player1': deck[(dealerNum+1)%4],
-                'player2': deck[(dealerNum+2)%4],
-                'player3': deck[(dealerNum+3)%4],
-                'player4': deck[dealerNum%4],
+                'player1': deck[(dealerNum+2)%4],
+                'player2': deck[(dealerNum+3)%4],
+                'player3': deck[(dealerNum)%4],
+                'player4': deck[(dealerNum+1)%4],
             },
         }).promise();
     } catch(error) {

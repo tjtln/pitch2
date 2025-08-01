@@ -139,7 +139,7 @@ export async function updateHand(gameId: string, handId: string, userId: string,
         Key: {
             PK: `HAND#${gameId}#${handId}`,
         },
-        UpdateExpression: `SET bid = :bid, bidder = :userId`,
+        UpdateExpression: `SET bid = :bid, bidder = :bidder`,
         ExpressionAttributeValues: {
             ':bid': bid,
             ':bidder': userId

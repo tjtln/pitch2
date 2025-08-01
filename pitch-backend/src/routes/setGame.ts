@@ -1,5 +1,6 @@
 import { APIGatewayProxyResultV2 } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
+import dealHands from './dealHands';
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 
 export default async function setGame(event: any, body: any): Promise<APIGatewayProxyResultV2> {
@@ -44,6 +45,7 @@ export default async function setGame(event: any, body: any): Promise<APIGateway
         } else if(!game.Item.player4){
             console.log(`setting player4 to ${userId} in game with id ${gameId}`);
             await setPlayer(gameId, userId, "player4");
+            await dealHands(gameId);
         } else {
             console.log("game full!");
             return {statusCode: 200};

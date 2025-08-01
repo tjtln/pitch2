@@ -119,5 +119,8 @@ async function getHandId(gameId: string): Promise<number> {
         await updateGame(gameId, "handId", 0);
     }
 
+    console.log("HANDID: " + JSON.stringify(game.handId));
+    console.log("HANDID: " + (game.handId));
+
     return game.handId ? Number(game.handId) :  0;
 }

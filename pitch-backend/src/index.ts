@@ -2,6 +2,7 @@ import { APIGatewayProxyWebsocketEventV2, APIGatewayProxyResultV2 } from 'aws-la
 import  setGame  from './routes/setGame';
 import  onConnect  from './routes/connect';
 import  onDisconnect  from './routes/disconnect';
+import submitBid from './routes/submitBid';
 
 export const handler = async (
   event: APIGatewayProxyWebsocketEventV2
@@ -26,6 +27,8 @@ export const handler = async (
       return await onDisconnect(event);
     case 'setGame':
       return await setGame(event, body);
+    case 'bid':
+      return submitBid(event, body);
     default:
       console.warn(`No handler for route: ${route}`);
       return { statusCode: 400, body: 'Unknown route' };

@@ -1,21 +1,17 @@
 import * as AWS from 'aws-sdk';
+import { createHand, getGame, updateGame } from './CRUDs';
 
 const dynamoDB = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.CONNECTIONS_TABLE;
 
 export default async function dealHands(gameId: string): Promise<Boolean>{
-    try {
-        const dealer = await getDealer(gameId);
-        const handId = await getHandId(gameId);
-        const deck = populateDeck();
-        const shuffledDeck = shuffleArray(deck);
-        const hands = [shuffledDeck.slice(0, 14), shuffledDeck.slice(14, 28), shuffledDeck.slice(28, 41), shuffledDeck.slice(41)];
-        await addHandToDB(handId, hands, gameId, dealer);        
-        return true;
-    } catch (error) {
-        console.log(`ERROR: ${error}`)
-        return false;
-    }
+    const dealer = await getDealer(gameId);
+    const handId = await getHandId(gameId);
+    const deck = populateDeck();
+    const shuffledDeck = shuffleArray(deck);
+    const hands = [shuffledDeck.slice(0, 14), shuffledDeck.slice(14, 28), shuffledDeck.slice(28, 41), shuffledDeck.slice(41)];
+    const dealerNum = parseInt(dealer.charAt(dealer.length-1));
+    return await createHand(gameId, handId, dealer, dealerNum, hands);
 }
 
 function populateDeck(): string[] {
@@ -113,54 +109,20 @@ async function getDealer(gameId: string): Promise<string> {
 }
 
 async function getHandId(gameId: string): Promise<number> {
-    const game = await dynamoDB.get({
-        TableName: tableName!,
-        Key: {
-          PK: `GAME#${gameId}`,
-        },
-    }).promise();
-
-    if(!game.Item){
-        throw new Error(`ERROR: no game found with id ${gameId}`);
+    const game = await getGame(gameId)
+    if(!game){
+        throw new Error(`Cannot find game with Id ${gameId}`);
     }
 
-    if(game.Item){
-        if(!game.Item.handId){
-            console.log(`No handId found in game ${gameId}, setting it to 0`);
-            await dynamoDB.update({
-                TableName: tableName!,
-                Key: {
-                    PK: `GAME#${gameId}`,
-                },
-                UpdateExpression: `SET handId = :handId`,
-                ExpressionAttributeValues: {
-                    ':handId': 0
-                },
-            }).promise();
-        }
+    if(!game.handId){
+        console.log(`No handId found in game ${gameId}, setting it to 0`);
+        await updateGame(gameId, "handId", 0);
     }
 
-    return game.Item.handId ?? 0;
+    return Number(game.handId) ?? 0;
 }
 
 async function addHandToDB(handId: number, deck: string[][], gameId: string, dealer: string){
-    try {
-        const dealerNum = parseInt(dealer.charAt(dealer.length-1));
-        console.log(`dealer: ${dealer}, dealerNum: ${dealerNum}, gameId: ${gameId}, handId: ${handId}`)
-        await dynamoDB.put({
-            TableName: tableName!,
-            Item: {
-                PK: `HAND#${gameId}#${handId}`,
-                'dealer': dealer,
-                'turn': `player${(dealerNum+1)%4}`,
-                'player1': deck[(dealerNum+2)%4],
-                'player2': deck[(dealerNum+3)%4],
-                'player3': deck[(dealerNum)%4],
-                'player4': deck[(dealerNum+1)%4],
-            },
-        }).promise();
-    } catch(error) {
-        console.log(`ERROR: error`)
-        return false
-    }
+    const dealerNum = parseInt(dealer.charAt(dealer.length-1));
+    createHand(gameId, handId, dealer, dealerNum, deck);
 }

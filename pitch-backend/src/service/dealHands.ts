@@ -7,7 +7,6 @@ const tableName = process.env.CONNECTIONS_TABLE;
 export default async function dealHands(gameId: string): Promise<Boolean>{
     const dealer = await getDealer(gameId);
     const handId = await getHandId(gameId);
-    console.log("HANDID: " + handId);
     const deck = populateDeck();
     const shuffledDeck = shuffleArray(deck);
     const hands = [shuffledDeck.slice(0, 14), shuffledDeck.slice(14, 28), shuffledDeck.slice(28, 41), shuffledDeck.slice(41)];
@@ -120,5 +119,5 @@ async function getHandId(gameId: string): Promise<number> {
         await updateGame(gameId, "handId", 0);
     }
 
-    return Number(game.handId) ?? 0;
+    return game.handId ? Number(game.handId) :  0;
 }

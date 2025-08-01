@@ -93,16 +93,22 @@ export async function getGame(gameId: string): Promise<AttributeMap | null> {
 }
 
 export async function updateGame(gameId: string, column: string, value: any){
-  await dynamoDB.update({
-      TableName: tableName!,
-      Key: {
-          PK: `GAME#${gameId}`,
-      },
-      UpdateExpression: `SET ${column} = :${column}`,
-      ExpressionAttributeValues: {
-          [`:${column}`]: value
-      },
-  }).promise();
+  try{
+    await dynamoDB.update({
+        TableName: tableName!,
+        Key: {
+            PK: `GAME#${gameId}`,
+        },
+        UpdateExpression: `SET ${column} = :${column}`,
+        ExpressionAttributeValues: {
+            [`:${column}`]: value
+        },
+    }).promise();
+    return true;
+  } catch(error){
+    console.log(`ERROR: ${error}`);
+    return false;
+  }
 }
 
 export async function createHand(gameId: string, handId: number, dealer: string, dealerNum: number, deck: string[][]): Promise<Boolean> {

@@ -9,7 +9,8 @@ export default async function dealHands(gameId: string): Promise<Boolean>{
         const handId = await getHandId(gameId);
         const deck = populateDeck();
         const shuffledDeck = shuffleArray(deck);
-        await addHandToDB(handId, shuffledDeck, gameId, dealer);        
+        const hands = [shuffledDeck.slice(0, 14), shuffledDeck.slice(14, 28), shuffledDeck.slice(28, 41), shuffledDeck.slice(41)];
+        await addHandToDB(handId, hands, gameId, dealer);        
         return true;
     } catch (error) {
         console.log(`ERROR: ${error}`)
@@ -142,7 +143,7 @@ async function getHandId(gameId: string): Promise<number> {
     return game.Item.dealer ?? 0;
 }
 
-async function addHandToDB(handId: number, deck: string[], gameId: string, dealer: string){
+async function addHandToDB(handId: number, deck: string[][], gameId: string, dealer: string){
     try {
         const dealerNum = parseInt(dealer.charAt(dealer.length-1));
         console.log(`dealer: ${dealer}, dealerNum: ${dealerNum}, gameId: ${gameId}, handId: ${handId}`)
